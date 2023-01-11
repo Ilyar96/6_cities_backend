@@ -5,11 +5,11 @@ import {
 	Get,
 	Param,
 	Post,
-	Query,
 	UploadedFiles,
 	UseInterceptors,
 } from "@nestjs/common";
 import { ObjectId } from "mongoose";
+import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { CreateHostDto } from "./dto/create-host.dto";
 import { HostService } from "./host.service";
 
@@ -18,14 +18,10 @@ export class HostController {
 	constructor(private hostService: HostService) {}
 
 	@Post()
-	// @UseInterceptors(
-	// 	FileFieldsInterceptor([
-	// 		{ name: "picture", maxCount: 1 },
-	// 		{ name: "audio", maxCount: 1 },
-	// 	])
-	// )
-	create(@Body() dto: CreateHostDto) {
-		return this.hostService.create(dto);
+	@UseInterceptors(FileFieldsInterceptor([{ name: "image", maxCount: 1 }]))
+	create(@UploadedFiles() files, @Body() dto: CreateHostDto) {
+		const image = files?.image?.[0] ? files.image[0] : "";
+		return this.hostService.create(dto, image);
 	}
 
 	@Get()
