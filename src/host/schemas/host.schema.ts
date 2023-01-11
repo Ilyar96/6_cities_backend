@@ -13,6 +13,12 @@ export class Host {
 
 	@Prop()
 	avatarUrl: string;
+
+	@Prop({ type: Number, unique: true, isRequired: true })
+	phone: number;
+
+	@Prop({ type: String, unique: true, isRequired: true })
+	email: string;
 }
 
 export const HostSchema = SchemaFactory.createForClass(Host);
