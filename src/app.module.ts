@@ -5,6 +5,8 @@ import * as path from "path";
 import { OfferModule } from "./offer/offer.module";
 import { FileModule } from "./file/file.module";
 import { HostModule } from "./host/host.module";
+import { CityController } from './city/city.controller';
+import { CityModule } from './city/city.module';
 
 @Module({
 	imports: [
@@ -17,6 +19,8 @@ import { HostModule } from "./host/host.module";
 		HostModule,
 		FileModule,
 		OfferModule,
+		CityModule,
 	],
+	controllers: [CityController],
 })
 export class AppModule {}

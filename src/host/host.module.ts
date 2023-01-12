@@ -11,5 +11,6 @@ import { FileService } from "src/file/file.service";
 	],
 	controllers: [HostController],
 	providers: [HostService, FileService],
+	exports: [HostService],
 })
 export class HostModule {}

@@ -1,18 +1,8 @@
 import { ObjectId } from "mongoose";
-
-export interface ILocation {
-	latitude: number;
-	longitude: number;
-	zoom: number;
-}
-
-export interface ICity {
-	name: string;
-	location: ILocation;
-}
+import { ILocation } from "../../city/dto/create-city.dto";
 
 export class CreateOfferDto {
-	readonly city: ICity;
+	readonly city: ObjectId;
 	readonly title: string;
 	readonly isFavorite: boolean;
 	readonly isPremium: boolean;

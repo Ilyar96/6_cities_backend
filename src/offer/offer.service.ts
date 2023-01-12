@@ -5,7 +5,7 @@ import { HostService } from "../host/host.service";
 import { FileService, FileType } from "../file/file.service";
 import { CreateOfferDto } from "./dto/create-offer.dto";
 import { Offer, OfferDocument } from "./schemas/offer.schema";
-import { errorCatcher } from "src/utils/errorCatcher";
+import { errorCatcher, getNearbyOffers } from "../utils";
 
 @Injectable()
 export class OfferService {
@@ -28,19 +28,13 @@ export class OfferService {
 			this.fileService.createFile(FileType.IMAGE, img)
 		);
 
-		await this.hostModel
-			.getOne(dto.host)
-			.catch(
-				errorCatcher("Host with this id does not exist", HttpStatus.BAD_REQUEST)
-			);
-
 		const offer = await (
 			await this.offerModel.create({
 				...dto,
 				previewImage: previewImageImagePath,
 				images: gallery,
 			})
-		).populate("host");
+		).populate(["host", "city"]);
 		return offer;
 	}
 
@@ -50,20 +44,25 @@ export class OfferService {
 	}
 
 	async getOne(id: ObjectId): Promise<Offer> {
-		const offer = await this.offerModel
-			.findById(id)
-			.catch(
-				errorCatcher("Host with this id does not exist", HttpStatus.BAD_REQUEST)
-			);
+		const offer = await this.offerModel.findById(id).populate(["host", "city"]);
+
+		if (!offer) {
+			errorCatcher("Host with this id does not exist", HttpStatus.BAD_REQUEST);
+		}
+
+		const allOffers = await this.offerModel.find().populate(["host", "city"]);
+		const nearbyOffers = getNearbyOffers(offer.location, allOffers, 3);
+		offer.nearbyOffers = nearbyOffers;
+
 		return offer;
 	}
 
 	async delete(id: ObjectId): Promise<ObjectId> {
-		const offer = await this.offerModel
-			.findByIdAndDelete(id)
-			.catch(
-				errorCatcher("Host with this id does not exist", HttpStatus.BAD_REQUEST)
-			);
-		return offer.id;
+		try {
+			const offer = await this.offerModel.findByIdAndDelete(id);
+			return offer.id;
+		} catch (err) {
+			errorCatcher("Host with this id does not exist", HttpStatus.BAD_REQUEST);
+		}
 	}
 }

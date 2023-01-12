@@ -1,37 +1,24 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
+import { Location } from "../../city/schemas/city.schema";
 import { Host } from "../../host/schemas/host.schema";
+import { City } from "../../city/schemas/city.schema";
 
 export type OfferDocument = HydratedDocument<Offer>;
 
 @Schema()
-class Location {
-	@Prop({ type: Number })
-	latitude: number;
-
-	@Prop({ type: Number })
-	longitude: number;
-
-	@Prop({ type: Number })
-	zoom: number;
-}
-
-@Schema()
-class City {
-	@Prop({ type: String })
-	name: string;
-
-	@Prop({ type: Location })
-	location: Location;
-}
-
-@Schema()
 export class Offer {
-	@Prop({ type: City })
+	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: "City" })
 	city: City;
 
 	@Prop({ type: String })
 	title: string;
+
+	@Prop({ type: String })
+	previewImage: string;
+
+	@Prop({ type: Array<String> })
+	images: string;
 
 	@Prop({ type: Boolean })
 	isFavorite: boolean;
@@ -56,6 +43,9 @@ export class Offer {
 
 	@Prop({ type: Array<String> })
 	goods: string[];
+
+	@Prop()
+	nearbyOffers: Offer[];
 
 	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Host" })
 	host: Host;
