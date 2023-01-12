@@ -3,10 +3,19 @@ import { HydratedDocument } from "mongoose";
 
 export type HostDocument = HydratedDocument<Host>;
 
+export enum UserRoles {
+	ADMIN = "ADMIN",
+	USER = "USER",
+	HOST = "HOST",
+}
+
 @Schema()
 export class Host {
 	@Prop()
 	name: string;
+
+	@Prop({ required: false })
+	role: UserRoles[];
 
 	@Prop()
 	isPro: boolean;
