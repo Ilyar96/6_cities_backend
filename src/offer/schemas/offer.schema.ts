@@ -1,14 +1,18 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
 import { Location } from "../../city/schemas/city.schema";
-import { Host } from "../../host/schemas/host.schema";
+import { User } from "../../user/schemas/user.schema";
 import { City } from "../../city/schemas/city.schema";
+import { Endpoints } from "../../const";
 
 export type OfferDocument = HydratedDocument<Offer>;
 
 @Schema()
 export class Offer {
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: "City" })
+	@Prop({
+		type: mongoose.Schema.Types.ObjectId,
+		ref: Endpoints.CITY_CAPITALIZE,
+	})
 	city: City;
 
 	@Prop({ type: String })
@@ -19,9 +23,6 @@ export class Offer {
 
 	@Prop({ type: Array<String> })
 	images: string;
-
-	@Prop({ type: Boolean })
-	isFavorite: boolean;
 
 	@Prop({ type: Boolean })
 	isPremium: boolean;
@@ -47,8 +48,11 @@ export class Offer {
 	@Prop()
 	nearbyOffers: Offer[];
 
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Host" })
-	host: Host;
+	@Prop({
+		type: mongoose.Schema.Types.ObjectId,
+		ref: Endpoints.USER_CAPITALIZE,
+	})
+	host: User;
 
 	@Prop({ type: String })
 	description: string;

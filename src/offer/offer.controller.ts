@@ -12,8 +12,9 @@ import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { CreateOfferDto } from "./dto/create-offer.dto";
 import { OfferService } from "./offer.service";
 import { ObjectId } from "mongoose";
+import { Endpoints } from "../const";
 
-@Controller("/offer")
+@Controller(Endpoints.OFFER)
 export class offerController {
 	constructor(private offerService: OfferService) {}
 
@@ -41,6 +42,11 @@ export class offerController {
 	getOne(@Param("id") id: ObjectId) {
 		return this.offerService.getOne(id);
 	}
+
+	// @Post("/ids")
+	// getByIds(@Body() ids: ObjectId[]) {
+	// 	return this.offerService.getByIds(ids);
+	// }
 
 	@Delete(":id")
 	delete(@Param("id") id: ObjectId) {

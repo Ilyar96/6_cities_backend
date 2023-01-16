@@ -2,8 +2,9 @@ import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { ObjectId } from "mongoose";
 import { CityService } from "./city.service";
 import { CreateCityDto } from "./dto/create-city.dto";
+import { Endpoints } from "../const";
 
-@Controller("city")
+@Controller(Endpoints.CITY)
 export class CityController {
 	constructor(private cityService: CityService) {}
 

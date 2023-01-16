@@ -17,7 +17,7 @@ export class Location {
 
 @Schema()
 export class City {
-	@Prop({ type: String })
+	@Prop({ type: String, unique: true })
 	name: string;
 
 	@Prop({ type: Location })
