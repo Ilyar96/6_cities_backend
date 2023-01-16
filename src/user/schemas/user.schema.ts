@@ -12,8 +12,11 @@ export enum UserRoles {
 
 @Schema()
 export class User {
-	@Prop()
+	@Prop({ type: String, isRequired: true })
 	name: string;
+
+	@Prop({ type: String, isRequired: true })
+	password: string;
 
 	@Prop({ required: false })
 	role: UserRoles[];

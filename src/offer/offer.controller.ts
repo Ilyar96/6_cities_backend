@@ -43,11 +43,6 @@ export class offerController {
 		return this.offerService.getOne(id);
 	}
 
-	// @Post("/ids")
-	// getByIds(@Body() ids: ObjectId[]) {
-	// 	return this.offerService.getByIds(ids);
-	// }
-
 	@Delete(":id")
 	delete(@Param("id") id: ObjectId) {
 		return this.offerService.delete(id);

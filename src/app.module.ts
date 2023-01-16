@@ -8,6 +8,7 @@ import { FileModule } from "./file/file.module";
 import { UserModule } from "./user/user.module";
 import { CityController } from "./city/city.controller";
 import { CityModule } from "./city/city.module";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
 	imports: [
@@ -22,6 +23,7 @@ import { CityModule } from "./city/city.module";
 		FileModule,
 		OfferModule,
 		CityModule,
+		AuthModule,
 	],
 	controllers: [CityController],
 })

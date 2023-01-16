@@ -17,7 +17,7 @@ export class UserService {
 		private offerService: OfferService
 	) {}
 
-	async create(dto: UserDto, image): Promise<User> {
+	async create(dto: UserDto, image): Promise<UserDocument> {
 		const imagePath = this.fileService.createFile(FileType.IMAGE, image);
 		try {
 			const role = !dto.role ? [UserRoles.USER] : [...dto.role];
@@ -86,6 +86,13 @@ export class UserService {
 		});
 		user.favorites = updatedFavorites;
 		user.save();
+		return user;
+	}
+
+	async getUserByEmail(email: string) {
+		const user = await this.userModel.findOne({
+			email,
+		});
 		return user;
 	}
 }

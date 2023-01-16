@@ -3,6 +3,7 @@ import { ObjectId } from "mongoose";
 
 export class UserDto {
 	readonly name: string;
+	readonly password: string;
 	readonly isPro: boolean;
 	readonly email: string;
 	readonly phone: number;
