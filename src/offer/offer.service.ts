@@ -6,7 +6,6 @@ import { CreateOfferDto } from "./dto/create-offer.dto";
 import { Offer, OfferDocument } from "./schemas/offer.schema";
 import { errorCatcher, getNearbyOffers } from "../utils";
 import { Endpoints } from "../const";
-import { UserService } from "src/user/user.service";
 
 @Injectable()
 export class OfferService {
@@ -51,13 +50,13 @@ export class OfferService {
 			.populate([Endpoints.USER, Endpoints.CITY]);
 
 		if (!offer) {
-			errorCatcher("User with this id does not exist", HttpStatus.BAD_REQUEST);
+			errorCatcher("Offer with this id does not exist", HttpStatus.BAD_REQUEST);
 		}
 
-		const allOffers = await this.offerModel
-			.find()
-			.populate([Endpoints.USER, Endpoints.CITY]);
-		const nearbyOffers = getNearbyOffers(offer.location, allOffers, 3);
+		const allOffers = await this.offerModel.find({
+			city: offer.city,
+		});
+		const nearbyOffers = getNearbyOffers(offer, allOffers, 3);
 		offer.nearbyOffers = nearbyOffers;
 
 		return offer;
@@ -70,7 +69,7 @@ export class OfferService {
 
 		if (offers.length === 0) {
 			errorCatcher(
-				"Users with this ids does not exist",
+				"Offers with this ids does not exist",
 				HttpStatus.BAD_REQUEST
 			);
 		}
@@ -83,7 +82,7 @@ export class OfferService {
 			const offer = await this.offerModel.findByIdAndDelete(id);
 			return offer.id;
 		} catch (err) {
-			errorCatcher("User with this id does not exist", HttpStatus.BAD_REQUEST);
+			errorCatcher("Offer with this id does not exist", HttpStatus.BAD_REQUEST);
 		}
 	}
 }

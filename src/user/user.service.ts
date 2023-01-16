@@ -1,11 +1,10 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import mongoose, { Model, ObjectId } from "mongoose";
+import { Model, ObjectId } from "mongoose";
 import { FileService, FileType } from "src/file/file.service";
 import { UserDto } from "./dto/create-user.dto";
 import { User, UserDocument, UserRoles } from "./schemas/user.schema";
 import { errorCatcher } from "../utils/errorCatcher";
-import { Endpoints } from "../const";
 import { OfferService } from "../offer/offer.service";
 import { OfferDocument } from "src/offer/schemas/offer.schema";
 

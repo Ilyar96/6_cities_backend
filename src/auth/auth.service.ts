@@ -1,9 +1,4 @@
-import {
-	HttpException,
-	HttpStatus,
-	Injectable,
-	UnauthorizedException,
-} from "@nestjs/common";
+import { HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserDto } from "src/user/dto/create-user.dto";
 import { UserService } from "src/user/user.service";
@@ -32,7 +27,7 @@ export class AuthService {
 			);
 		}
 
-		const hashPassword = await bcrypt.hash(userDto.password, 5); // 5 - salt
+		const hashPassword = await bcrypt.hash(userDto.password, 5);
 		const user = await this.userService.create(
 			{
 				...userDto,
