@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
+import { Offer } from "src/offer/schemas/offer.schema";
 
-export type HostDocument = HydratedDocument<Host>;
+export type UserDocument = HydratedDocument<User>;
 
 export enum UserRoles {
 	ADMIN = "ADMIN",
@@ -10,9 +11,12 @@ export enum UserRoles {
 }
 
 @Schema()
-export class Host {
-	@Prop()
+export class User {
+	@Prop({ type: String, isRequired: true })
 	name: string;
+
+	@Prop({ type: String, isRequired: true })
+	password: string;
 
 	@Prop({ required: false })
 	role: UserRoles[];
@@ -28,6 +32,11 @@ export class Host {
 
 	@Prop({ type: String, unique: true, isRequired: true })
 	email: string;
+
+	@Prop({
+		required: false,
+	})
+	favorites: Array<Offer>;
 }
 
-export const HostSchema = SchemaFactory.createForClass(Host);
+export const UserSchema = SchemaFactory.createForClass(User);

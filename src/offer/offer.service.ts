@@ -1,17 +1,22 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, ObjectId } from "mongoose";
-import { HostService } from "../host/host.service";
 import { FileService, FileType } from "../file/file.service";
 import { CreateOfferDto } from "./dto/create-offer.dto";
 import { Offer, OfferDocument } from "./schemas/offer.schema";
 import { errorCatcher, getNearbyOffers } from "../utils";
+import { Endpoints } from "../const";
+
+export interface IData {
+	offersCount: number;
+	pagesCount: number;
+	data: Offer[];
+}
 
 @Injectable()
 export class OfferService {
 	constructor(
 		@InjectModel(Offer.name) private offerModel: Model<OfferDocument>,
-		private hostModel: HostService,
 		private fileService: FileService
 	) {}
 
@@ -34,24 +39,48 @@ export class OfferService {
 				previewImage: previewImageImagePath,
 				images: gallery,
 			})
-		).populate(["host", "city"]);
+		).populate([Endpoints.USER, Endpoints.CITY]);
 		return offer;
 	}
 
-	async getAll(): Promise<Offer[]> {
-		const offers = await this.offerModel.find().populate("host");
-		return offers;
+	async getAll(
+		sortBy: string = "createdAt",
+		order: string = "asc",
+		limit: number = 2,
+		page: number = 1,
+		cityId: ObjectId
+	): Promise<IData> {
+		const filter = cityId ? { city: cityId } : null;
+		const offersCount = (await this.offerModel.find(filter)).length;
+		const pagesCount = Math.ceil(offersCount / limit);
+		const offers = await this.offerModel
+			.find(filter)
+			.limit(limit)
+			.sort({ [sortBy]: order.toLowerCase() === "asc" ? -1 : 1 })
+			.skip(limit * (page - 1))
+			.populate([Endpoints.USER, Endpoints.CITY]);
+
+		const data = {
+			offersCount,
+			pagesCount,
+			data: offers,
+		};
+		return data;
 	}
 
 	async getOne(id: ObjectId): Promise<Offer> {
-		const offer = await this.offerModel.findById(id).populate(["host", "city"]);
+		const offer = await this.offerModel
+			.findById(id)
+			.populate([Endpoints.USER, Endpoints.CITY]);
 
 		if (!offer) {
-			errorCatcher("Host with this id does not exist", HttpStatus.BAD_REQUEST);
+			errorCatcher("Offer with this id does not exist", HttpStatus.BAD_REQUEST);
 		}
 
-		const allOffers = await this.offerModel.find().populate(["host", "city"]);
-		const nearbyOffers = getNearbyOffers(offer.location, allOffers, 3);
+		const allOffers = await this.offerModel.find({
+			city: offer.city,
+		});
+		const nearbyOffers = getNearbyOffers(offer, allOffers, 3);
 		offer.nearbyOffers = nearbyOffers;
 
 		return offer;
@@ -62,7 +91,7 @@ export class OfferService {
 			const offer = await this.offerModel.findByIdAndDelete(id);
 			return offer.id;
 		} catch (err) {
-			errorCatcher("Host with this id does not exist", HttpStatus.BAD_REQUEST);
+			errorCatcher("Offer with this id does not exist", HttpStatus.BAD_REQUEST);
 		}
 	}
 }

@@ -1,25 +1,29 @@
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import * as path from "path";
 import { OfferModule } from "./offer/offer.module";
 import { FileModule } from "./file/file.module";
-import { HostModule } from "./host/host.module";
-import { CityController } from './city/city.controller';
-import { CityModule } from './city/city.module';
+import { UserModule } from "./user/user.module";
+import { CityController } from "./city/city.controller";
+import { CityModule } from "./city/city.module";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
 	imports: [
+		ConfigModule.forRoot({
+			envFilePath: `.${process.env.NODE_ENV}.env`,
+		}),
 		ServeStaticModule.forRoot({
 			rootPath: path.resolve(__dirname, "static"),
 		}),
-		MongooseModule.forRoot(
-			"mongodb+srv://ilyar:X0T16ScOhy3vKd1I@cluster0.cfzt2n8.mongodb.net/6-sities?retryWrites=true&w=majority"
-		),
-		HostModule,
+		MongooseModule.forRoot(process.env.MONGODB_URI_6_CITIES),
+		UserModule,
 		FileModule,
 		OfferModule,
 		CityModule,
+		AuthModule,
 	],
 	controllers: [CityController],
 })

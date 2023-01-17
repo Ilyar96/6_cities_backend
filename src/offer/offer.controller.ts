@@ -5,6 +5,7 @@ import {
 	Get,
 	Param,
 	Post,
+	Query,
 	UploadedFiles,
 	UseInterceptors,
 } from "@nestjs/common";
@@ -12,8 +13,9 @@ import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { CreateOfferDto } from "./dto/create-offer.dto";
 import { OfferService } from "./offer.service";
 import { ObjectId } from "mongoose";
+import { Endpoints } from "../const";
 
-@Controller("/offer")
+@Controller(Endpoints.OFFER)
 export class offerController {
 	constructor(private offerService: OfferService) {}
 
@@ -33,8 +35,14 @@ export class offerController {
 	}
 
 	@Get()
-	getAll() {
-		return this.offerService.getAll();
+	getAll(
+		@Query("sortBy") sortBy: string,
+		@Query("order") order: string,
+		@Query("limit") limit: number,
+		@Query("page") page: number,
+		@Query("cityId") cityId: ObjectId
+	) {
+		return this.offerService.getAll(sortBy, order, limit, page, cityId);
 	}
 
 	@Get(":id")
