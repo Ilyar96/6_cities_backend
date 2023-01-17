@@ -7,6 +7,12 @@ import { Offer, OfferDocument } from "./schemas/offer.schema";
 import { errorCatcher, getNearbyOffers } from "../utils";
 import { Endpoints } from "../const";
 
+export interface IData {
+	offersCount: number;
+	pagesCount: number;
+	data: Offer[];
+}
+
 @Injectable()
 export class OfferService {
 	constructor(
@@ -37,11 +43,29 @@ export class OfferService {
 		return offer;
 	}
 
-	async getAll(): Promise<Offer[]> {
+	async getAll(
+		sortBy: string = "createdAt",
+		order: string = "asc",
+		limit: number = 2,
+		page: number = 1,
+		cityId: ObjectId
+	): Promise<IData> {
+		const filter = cityId ? { city: cityId } : null;
+		const offersCount = (await this.offerModel.find(filter)).length;
+		const pagesCount = Math.ceil(offersCount / limit);
 		const offers = await this.offerModel
-			.find()
+			.find(filter)
+			.limit(limit)
+			.sort({ [sortBy]: order.toLowerCase() === "asc" ? -1 : 1 })
+			.skip(limit * (page - 1))
 			.populate([Endpoints.USER, Endpoints.CITY]);
-		return offers;
+
+		const data = {
+			offersCount,
+			pagesCount,
+			data: offers,
+		};
+		return data;
 	}
 
 	async getOne(id: ObjectId): Promise<Offer> {
@@ -60,21 +84,6 @@ export class OfferService {
 		offer.nearbyOffers = nearbyOffers;
 
 		return offer;
-	}
-
-	async getByIds(ids: ObjectId[]): Promise<Offer[]> {
-		const offers = await this.offerModel
-			.find({ _id: ids })
-			.populate([Endpoints.USER, Endpoints.CITY]);
-
-		if (offers.length === 0) {
-			errorCatcher(
-				"Offers with this ids does not exist",
-				HttpStatus.BAD_REQUEST
-			);
-		}
-
-		return offers;
 	}
 
 	async delete(id: ObjectId): Promise<ObjectId> {

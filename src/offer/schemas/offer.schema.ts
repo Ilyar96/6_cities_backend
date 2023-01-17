@@ -7,7 +7,7 @@ import { Endpoints } from "../../const";
 
 export type OfferDocument = HydratedDocument<Offer>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Offer {
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
