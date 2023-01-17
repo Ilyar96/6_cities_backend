@@ -22,7 +22,7 @@ export class AuthService {
 		const candidate = await this.userService.getUserByEmail(userDto.email);
 		if (candidate) {
 			errorCatcher(
-				"Пользователь с таким email уже существует",
+				"User with this email already exists",
 				HttpStatus.BAD_REQUEST
 			);
 		}
@@ -52,16 +52,30 @@ export class AuthService {
 	}
 
 	private async validateUser(userDto: UserDto) {
-		const user = await this.userService.getUserByEmail(userDto.email);
-		const passwordEquals = await bcrypt.compare(
-			userDto.password,
-			user.password
-		);
-		if (user && passwordEquals) {
-			return user;
+		try {
+			const user = await this.userService.getUserByEmail(userDto.email);
+
+			if (!user) {
+				throw new UnauthorizedException({
+					message: "Incorrect email or password",
+				});
+			}
+
+			const passwordEquals = await bcrypt.compare(
+				userDto.password,
+				user.password
+			);
+
+			if (passwordEquals) {
+				return user;
+			}
+		} catch (err) {
+			throw new UnauthorizedException({
+				message: err.message,
+			});
 		}
 		throw new UnauthorizedException({
-			message: "Некорректный email или пароль",
+			message: "Incorrect email or password",
 		});
 	}
 }
