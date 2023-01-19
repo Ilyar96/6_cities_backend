@@ -55,6 +55,9 @@ export class Offer {
 	host: User;
 
 	@Prop({ type: String })
+	address: string;
+
+	@Prop({ type: String })
 	description: string;
 
 	@Prop({ type: Location })

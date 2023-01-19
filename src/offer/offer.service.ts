@@ -46,7 +46,7 @@ export class OfferService {
 	async getAll(
 		sortBy: string = "createdAt",
 		order: string = "asc",
-		limit: number = 2,
+		limit: number = 10,
 		page: number = 1,
 		cityId: ObjectId
 	): Promise<IData> {
@@ -56,7 +56,7 @@ export class OfferService {
 		const offers = await this.offerModel
 			.find(filter)
 			.limit(limit)
-			.sort({ [sortBy]: order.toLowerCase() === "asc" ? -1 : 1 })
+			.sort({ [sortBy]: order.toLowerCase() === "asc" ? 1 : -1 })
 			.skip(limit * (page - 1))
 			.populate([Endpoints.USER, Endpoints.CITY]);
 

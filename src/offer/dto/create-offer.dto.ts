@@ -12,6 +12,7 @@ export class CreateOfferDto {
 	readonly price: number;
 	readonly goods: string[];
 	readonly host: ObjectId;
+	readonly address: string;
 	readonly description: string;
 	readonly location: ILocation;
 }
