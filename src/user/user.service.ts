@@ -61,8 +61,16 @@ export class UserService {
 	}
 
 	async delete(id: ObjectId): Promise<ObjectId> {
-		const user = await this.userModel.findByIdAndDelete(id);
-		return user.id;
+		try {
+			const user = await this.userModel.findByIdAndDelete(id);
+			this.fileService.removeFile(
+				FileType.IMAGE,
+				user.avatarUrl.slice(FileType.IMAGE.length + 1)
+			);
+			return user.id;
+		} catch (err) {
+			errorCatcher(`User with this id does not exist`, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	async addFavoriteOffer(userId: ObjectId, id: ObjectId): Promise<User> {

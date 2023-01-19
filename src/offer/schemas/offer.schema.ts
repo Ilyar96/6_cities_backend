@@ -22,7 +22,7 @@ export class Offer {
 	previewImage: string;
 
 	@Prop({ type: Array<String> })
-	images: string;
+	images: string[];
 
 	@Prop({ type: Boolean })
 	isPremium: boolean;

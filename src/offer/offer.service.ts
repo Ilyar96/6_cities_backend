@@ -89,6 +89,16 @@ export class OfferService {
 	async delete(id: ObjectId): Promise<ObjectId> {
 		try {
 			const offer = await this.offerModel.findByIdAndDelete(id);
+			this.fileService.removeFile(
+				FileType.IMAGE,
+				offer.previewImage.slice(FileType.IMAGE.length + 1)
+			);
+			offer.images.forEach((imagePath) => {
+				this.fileService.removeFile(
+					FileType.IMAGE,
+					imagePath.slice(FileType.IMAGE.length + 1)
+				);
+			});
 			return offer.id;
 		} catch (err) {
 			errorCatcher("Offer with this id does not exist", HttpStatus.BAD_REQUEST);
