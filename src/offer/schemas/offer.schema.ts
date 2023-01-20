@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument } from "mongoose";
+import mongoose, { HydratedDocument, ObjectId } from "mongoose";
 import { Location } from "../../city/schemas/city.schema";
 import { User } from "../../user/schemas/user.schema";
 import { City } from "../../city/schemas/city.schema";
@@ -62,6 +62,9 @@ export class Offer {
 
 	@Prop({ type: Location })
 	location: Location;
+
+	@Prop({ required: false })
+	comments: Array<any>;
 }
 
 export const OfferSchema = SchemaFactory.createForClass(Offer);

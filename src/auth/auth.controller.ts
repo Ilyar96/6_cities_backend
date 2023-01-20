@@ -10,10 +10,11 @@ import {
 } from "@nestjs/common";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { ObjectId } from "mongoose";
+import { Endpoints } from "src/const";
 import { UserDto } from "src/user/dto/create-user.dto";
 import { AuthService } from "./auth.service";
 
-@Controller("auth")
+@Controller(Endpoints.AUTH)
 export class AuthController {
 	constructor(private authService: AuthService) {}
 

@@ -26,12 +26,12 @@ export class offerController {
 			{ name: "galleryImages", maxCount: 6 },
 		])
 	)
-	create(@UploadedFiles() files, @Body() dto: CreateOfferDto) {
+	create(@UploadedFiles() files, @Body() offerDto: CreateOfferDto) {
 		const previewImage = files?.previewImage?.[0] ? files.previewImage[0] : "";
 		const galleryImages = files?.galleryImages?.length
 			? files.galleryImages
 			: [];
-		return this.offerService.create(dto, previewImage, galleryImages);
+		return this.offerService.create(offerDto, previewImage, galleryImages);
 	}
 
 	@Get()

@@ -5,6 +5,6 @@ export interface ILocation {
 }
 
 export class CreateCityDto {
-	name: string;
-	location: ILocation;
+	readonly name: string;
+	readonly location: ILocation;
 }

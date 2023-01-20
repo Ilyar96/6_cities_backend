@@ -8,11 +8,12 @@ import { UserDocument } from "src/user/schemas/user.schema";
 import { Model, ObjectId } from "mongoose";
 import { Auth, AuthDocument } from "./schemas/auth.schemas";
 import { InjectModel } from "@nestjs/mongoose";
+import { OfferService } from "src/offer/offer.service";
 
 @Injectable()
 export class AuthService {
 	constructor(
-		@InjectModel(Auth.name) private offerModel: Model<AuthDocument>,
+		@InjectModel(Auth.name) private authModel: Model<AuthDocument>,
 		private userService: UserService,
 		private jwtService: JwtService
 	) {}
@@ -52,7 +53,6 @@ export class AuthService {
 				const decoded = this.jwtService.verify(token, {
 					secret: process.env.PRIVATE_KEY || "SECRET",
 				});
-
 				const user = await this.userService.getOne(decoded._id);
 
 				return getUserDataWithoutPassword(user, token);
@@ -68,7 +68,6 @@ export class AuthService {
 		const payload = {
 			_id: user._id,
 			name: user.name,
-			comments: user.comments,
 			role: user.role,
 			isPro: user.isPro,
 			avatarUrl: user.avatarUrl,

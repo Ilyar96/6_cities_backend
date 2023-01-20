@@ -6,6 +6,7 @@ import { CreateOfferDto } from "./dto/create-offer.dto";
 import { Offer, OfferDocument } from "./schemas/offer.schema";
 import { errorCatcher, getNearbyOffers } from "../utils";
 import { Endpoints } from "../const";
+import { CommentDocument } from "src/comment/schemas/comment.schemas";
 
 export interface IData {
 	offersCount: number;
@@ -36,6 +37,7 @@ export class OfferService {
 		const offer = await (
 			await this.offerModel.create({
 				...dto,
+				comments: [],
 				previewImage: previewImageImagePath,
 				images: gallery,
 			})
@@ -82,7 +84,6 @@ export class OfferService {
 		});
 		const nearbyOffers = getNearbyOffers(offer, allOffers, 3);
 		offer.nearbyOffers = nearbyOffers;
-
 		return offer;
 	}
 
@@ -103,5 +104,47 @@ export class OfferService {
 		} catch (err) {
 			errorCatcher("Offer with this id does not exist", HttpStatus.BAD_REQUEST);
 		}
+	}
+
+	async addComment(comment: CommentDocument): Promise<Offer> {
+		try {
+			const {
+				description,
+				offer: offerId,
+				user,
+				_id,
+				createdAt,
+				updatedAt,
+			}: CommentDocument = comment;
+			const offer = await this.offerModel.findById(offerId);
+			offer.comments.push({ user, description, _id, createdAt, updatedAt });
+			offer.save();
+			return offer;
+		} catch (err) {
+			errorCatcher(err.message, HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	async removeComment(comment: CommentDocument): Promise<Offer> {
+		const offer = await this.offerModel.findById(comment.offer);
+		offer.comments = offer.comments.filter((c: CommentDocument) => {
+			return c._id.toString() !== comment._id.toString();
+		});
+		offer.save();
+		return offer;
+	}
+
+	async updateComment(comment: CommentDocument): Promise<Offer> {
+		const { description, user, _id, createdAt, updatedAt }: CommentDocument =
+			comment;
+
+		const offer = await this.offerModel.findById(comment.offer);
+		offer.comments = offer.comments.filter((c: CommentDocument) => {
+			return c._id.toString() !== comment._id.toString();
+		});
+		offer.comments.push({ user, description, _id, createdAt, updatedAt });
+		console.log(offer.comments);
+		offer.save();
+		return offer;
 	}
 }

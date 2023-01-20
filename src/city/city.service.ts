@@ -10,8 +10,15 @@ export class CityService {
 	constructor(@InjectModel(City.name) private cityModel: Model<CityDocument>) {}
 
 	async create(dto: CreateCityDto): Promise<City> {
-		const city = await this.cityModel.create(dto);
-		return city;
+		try {
+			const city = await this.cityModel.create(dto);
+			return city;
+		} catch (err) {
+			if (err.keyValue && "name" in err.keyValue) {
+				errorCatcher("City name must be unique", HttpStatus.BAD_REQUEST);
+			}
+			errorCatcher(err.message, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	async getAll(): Promise<City[]> {
