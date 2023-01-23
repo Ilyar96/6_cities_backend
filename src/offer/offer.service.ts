@@ -45,6 +45,30 @@ export class OfferService {
 		return offer;
 	}
 
+	async update(
+		dto: CreateOfferDto,
+		previewImage: File,
+		galleryImages: File[],
+		id: ObjectId
+	): Promise<Offer> {
+		const previewImageImagePath = this.fileService.createFile(
+			FileType.IMAGE,
+			previewImage
+		);
+		const gallery = galleryImages.map((img) =>
+			this.fileService.createFile(FileType.IMAGE, img)
+		);
+
+		const offer = await (
+			await this.offerModel.findByIdAndUpdate(id, {
+				...dto,
+				previewImage: previewImageImagePath,
+				images: gallery,
+			})
+		).populate([Endpoints.USER, Endpoints.CITY]);
+		return offer;
+	}
+
 	async getAll(
 		sortBy: string = "createdAt",
 		order: string = "asc",
@@ -79,9 +103,11 @@ export class OfferService {
 			errorCatcher("Offer with this id does not exist", HttpStatus.BAD_REQUEST);
 		}
 
-		const allOffers = await this.offerModel.find({
-			city: offer.city,
-		});
+		const allOffers = await this.offerModel
+			.find({
+				city: offer.city,
+			})
+			.populate([Endpoints.USER, Endpoints.CITY]);
 		const nearbyOffers = getNearbyOffers(offer, allOffers, 3);
 		offer.nearbyOffers = nearbyOffers;
 		return offer;

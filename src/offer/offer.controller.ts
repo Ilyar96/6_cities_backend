@@ -34,6 +34,25 @@ export class offerController {
 		return this.offerService.create(offerDto, previewImage, galleryImages);
 	}
 
+	@Post(":id")
+	@UseInterceptors(
+		FileFieldsInterceptor([
+			{ name: "previewImage", maxCount: 1 },
+			{ name: "galleryImages", maxCount: 6 },
+		])
+	)
+	update(
+		@UploadedFiles() files,
+		@Body() offerDto: CreateOfferDto,
+		@Param("id") id: ObjectId
+	) {
+		const previewImage = files?.previewImage?.[0] ? files.previewImage[0] : "";
+		const galleryImages = files?.galleryImages?.length
+			? files.galleryImages
+			: [];
+		return this.offerService.update(offerDto, previewImage, galleryImages, id);
+	}
+
 	@Get()
 	getAll(
 		@Query("sortBy") sortBy: string,
