@@ -27,7 +27,7 @@ export class User {
 	@Prop()
 	avatarUrl: string;
 
-	@Prop({ type: Number, unique: true, isRequired: true })
+	@Prop({ type: Number, unique: false, isRequired: false, index: true })
 	phone: number;
 
 	@Prop({ type: String, unique: true, isRequired: true })
