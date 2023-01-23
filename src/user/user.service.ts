@@ -17,7 +17,9 @@ export class UserService {
 	) {}
 
 	async create(dto: UserDto, image): Promise<UserDocument> {
-		const imagePath = this.fileService.createFile(FileType.IMAGE, image);
+		const imagePath = image
+			? this.fileService.createFile(FileType.IMAGE, image)
+			: "";
 		try {
 			const role = !dto.role ? [UserRoles.USER] : [...dto.role];
 			const favorites = dto.favorites ? [...dto.favorites] : [];

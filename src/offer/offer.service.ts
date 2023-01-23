@@ -26,13 +26,14 @@ export class OfferService {
 		previewImage: File,
 		galleryImages: File[]
 	): Promise<Offer> {
-		const previewImageImagePath = this.fileService.createFile(
-			FileType.IMAGE,
-			previewImage
-		);
-		const gallery = galleryImages.map((img) =>
-			this.fileService.createFile(FileType.IMAGE, img)
-		);
+		const previewImageImagePath = previewImage
+			? this.fileService.createFile(FileType.IMAGE, previewImage)
+			: "";
+		const gallery = galleryImages.length
+			? galleryImages.map((img) =>
+					this.fileService.createFile(FileType.IMAGE, img)
+			  )
+			: [];
 
 		const offer = await (
 			await this.offerModel.create({
@@ -51,13 +52,14 @@ export class OfferService {
 		galleryImages: File[],
 		id: ObjectId
 	): Promise<Offer> {
-		const previewImageImagePath = this.fileService.createFile(
-			FileType.IMAGE,
-			previewImage
-		);
-		const gallery = galleryImages.map((img) =>
-			this.fileService.createFile(FileType.IMAGE, img)
-		);
+		const previewImageImagePath = previewImage
+			? this.fileService.createFile(FileType.IMAGE, previewImage)
+			: "";
+		const gallery = galleryImages.length
+			? galleryImages.map((img) =>
+					this.fileService.createFile(FileType.IMAGE, img)
+			  )
+			: [];
 
 		const offer = await (
 			await this.offerModel.findByIdAndUpdate(id, {
