@@ -139,13 +139,21 @@ export class OfferService {
 			const {
 				description,
 				offer: offerId,
+				rating,
 				user,
 				_id,
 				createdAt,
 				updatedAt,
-			}: CommentDocument = comment;
+			} = comment;
 			const offer = await this.offerModel.findById(offerId);
-			offer.comments.push({ user, description, _id, createdAt, updatedAt });
+			offer.comments.push({
+				user,
+				description,
+				_id,
+				rating,
+				createdAt,
+				updatedAt,
+			});
 			offer.save();
 			return offer;
 		} catch (err) {

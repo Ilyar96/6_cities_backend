@@ -11,6 +11,9 @@ export class Comment {
 	@Prop({ type: String })
 	description: string;
 
+	@Prop({ type: String })
+	rating: number;
+
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: Endpoints.USER_CAPITALIZE,

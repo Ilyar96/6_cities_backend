@@ -26,6 +26,7 @@ export class CommentService {
 					...dto,
 				})
 			).populate(["user"]);
+
 			await this.offerService.addComment(comment);
 			return comment;
 		} catch (err) {
