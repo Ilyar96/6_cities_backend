@@ -17,6 +17,14 @@ export class UserService {
 	) {}
 
 	async create(dto: UserDto, image): Promise<UserDocument> {
+		if (!dto.email) {
+			errorCatcher("You need to enter an email", HttpStatus.BAD_REQUEST);
+		}
+
+		if (!dto.password) {
+			errorCatcher("You need to enter a password", HttpStatus.BAD_REQUEST);
+		}
+
 		const imagePath = image
 			? this.fileService.createFile(FileType.IMAGE, image)
 			: "";
