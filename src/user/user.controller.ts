@@ -21,9 +21,15 @@ export class UserController {
 	constructor(private userService: UserService) {}
 
 	@Post()
-	@UseInterceptors(FileFieldsInterceptor([{ name: "image", maxCount: 1 }]))
+	@UseInterceptors(FileFieldsInterceptor([{ name: "avatarUrl", maxCount: 1 }]))
 	create(@UploadedFiles() files, @Body() dto: UserDto) {
-		const image = files?.image?.[0] ? files.image[0] : "";
+		let image = "";
+		if (files?.avatarUrl?.[0]) {
+			image = files.avatarUrl[0];
+		}
+		if (dto.avatarUrl) {
+			image = dto.avatarUrl;
+		}
 		return this.userService.create(dto, image);
 	}
 

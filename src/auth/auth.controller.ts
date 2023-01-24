@@ -24,10 +24,16 @@ export class AuthController {
 	}
 
 	@Post("/registration")
-	@UseInterceptors(FileFieldsInterceptor([{ name: "image", maxCount: 1 }]))
+	@UseInterceptors(FileFieldsInterceptor([{ name: "avatarUrl", maxCount: 1 }]))
 	registration(@UploadedFiles() files, @Body() userDto: UserDto) {
-		const image = files?.image?.[0] ? files.image[0] : "";
-		return this.authService.registration(userDto, image);
+		let avatarUrl = "";
+		if (files?.avatarUrl?.[0]) {
+			avatarUrl = files.avatarUrl[0];
+		}
+		if (userDto.avatarUrl) {
+			avatarUrl = userDto.avatarUrl;
+		}
+		return this.authService.registration(userDto, avatarUrl);
 	}
 
 	@Get("/me")

@@ -6,6 +6,7 @@ export class UserDto {
 	readonly password: string;
 	readonly isPro: boolean;
 	readonly email: string;
+	readonly avatarUrl: string;
 	readonly phone: number;
 	readonly role: UserRoles[];
 	readonly favorites: ObjectId[];

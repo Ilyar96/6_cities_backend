@@ -24,7 +24,7 @@ export class AuthService {
 		return getUserDataWithoutPassword(user, token);
 	}
 
-	async registration(userDto: UserDto, image) {
+	async registration(userDto: UserDto, avatarUrl) {
 		const candidate = await this.userService.getUserByEmail(userDto.email);
 		if (candidate) {
 			errorCatcher(
@@ -39,7 +39,7 @@ export class AuthService {
 				...userDto,
 				password: hashPassword,
 			},
-			image
+			avatarUrl
 		);
 
 		const { token } = await this.generateToken(user);

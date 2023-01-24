@@ -16,7 +16,7 @@ export class UserService {
 		private offerService: OfferService
 	) {}
 
-	async create(dto: UserDto, image): Promise<UserDocument> {
+	async create(dto: UserDto, avatarUrl): Promise<UserDocument> {
 		if (!dto.email) {
 			errorCatcher("You need to enter an email", HttpStatus.BAD_REQUEST);
 		}
@@ -32,9 +32,10 @@ export class UserService {
 			);
 		}
 
-		const imagePath = image
-			? this.fileService.createFile(FileType.IMAGE, image)
-			: "";
+		const imagePath =
+			typeof avatarUrl === "string"
+				? avatarUrl
+				: this.fileService.createFile(FileType.IMAGE, avatarUrl);
 		try {
 			const role = !dto.role ? [UserRoles.USER] : [...dto.role];
 			const favorites = dto.favorites ? [...dto.favorites] : [];
