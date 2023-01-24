@@ -23,8 +23,8 @@ export class OfferService {
 
 	async create(
 		dto: CreateOfferDto,
-		previewImage: File,
-		images: File[]
+		previewImage: File | string,
+		images: File[] | string[]
 	): Promise<Offer> {
 		const previewImageImagePath =
 			typeof previewImage === "string"
@@ -49,26 +49,32 @@ export class OfferService {
 
 	async update(
 		dto: CreateOfferDto,
-		previewImage: File,
-		galleryImages: File[],
+		previewImage: File | string,
+		images: File[] | string[],
 		id: ObjectId
 	): Promise<Offer> {
-		const previewImageImagePath = previewImage
-			? this.fileService.createFile(FileType.IMAGE, previewImage)
-			: "";
-		const gallery = galleryImages.length
-			? galleryImages.map((img) =>
-					this.fileService.createFile(FileType.IMAGE, img)
-			  )
-			: [];
+		const previewImageImagePath =
+			typeof previewImage === "string"
+				? previewImage
+				: this.fileService.createFile(FileType.IMAGE, previewImage);
 
-		const offer = await (
+		const gallery =
+			typeof images[0] === "string"
+				? images
+				: images.map((img) => this.fileService.createFile(FileType.IMAGE, img));
+
+		let offer = await (
 			await this.offerModel.findByIdAndUpdate(id, {
 				...dto,
 				previewImage: previewImageImagePath,
 				images: gallery,
 			})
 		).populate([Endpoints.USER, Endpoints.CITY]);
+
+		offer = await this.offerModel
+			.findById(id)
+			.populate([Endpoints.USER, Endpoints.CITY]);
+
 		return offer;
 	}
 

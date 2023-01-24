@@ -16,7 +16,7 @@ export class UserService {
 		private offerService: OfferService
 	) {}
 
-	async create(dto: UserDto, avatarUrl): Promise<UserDocument> {
+	async create(dto: UserDto, avatarUrl: File | string): Promise<UserDocument> {
 		if (!dto.email) {
 			errorCatcher("You need to enter an email", HttpStatus.BAD_REQUEST);
 		}
