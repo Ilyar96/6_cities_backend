@@ -24,16 +24,17 @@ export class OfferService {
 	async create(
 		dto: CreateOfferDto,
 		previewImage: File,
-		galleryImages: File[]
+		images: File[]
 	): Promise<Offer> {
-		const previewImageImagePath = previewImage
-			? this.fileService.createFile(FileType.IMAGE, previewImage)
-			: "";
-		const gallery = galleryImages.length
-			? galleryImages.map((img) =>
-					this.fileService.createFile(FileType.IMAGE, img)
-			  )
-			: [];
+		const previewImageImagePath =
+			typeof previewImage === "string"
+				? previewImage
+				: this.fileService.createFile(FileType.IMAGE, previewImage);
+
+		const gallery =
+			typeof images[0] === "string"
+				? images
+				: images.map((img) => this.fileService.createFile(FileType.IMAGE, img));
 
 		const offer = await (
 			await this.offerModel.create({

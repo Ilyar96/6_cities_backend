@@ -7,6 +7,8 @@ export class CreateOfferDto {
 	readonly isPremium: boolean;
 	readonly rating: number;
 	readonly type: string;
+	readonly previewImage: string;
+	readonly images: string[];
 	readonly bedrooms: number;
 	readonly maxAdults: number;
 	readonly price: number;

@@ -23,14 +23,25 @@ export class offerController {
 	@UseInterceptors(
 		FileFieldsInterceptor([
 			{ name: "previewImage", maxCount: 1 },
-			{ name: "galleryImages", maxCount: 6 },
+			{ name: "images", maxCount: 6 },
 		])
 	)
 	create(@UploadedFiles() files, @Body() offerDto: CreateOfferDto) {
-		const previewImage = files?.previewImage?.[0] ? files.previewImage[0] : "";
-		const galleryImages = files?.galleryImages?.length
-			? files.galleryImages
-			: [];
+		let previewImage = files?.previewImage?.[0] ? files.previewImage[0] : "";
+		if (files?.previewImage?.[0]) {
+			previewImage = files.previewImage[0];
+		}
+		if (offerDto.previewImage) {
+			previewImage = offerDto.previewImage;
+		}
+
+		let galleryImages = [];
+		if (files?.images?.[0]) {
+			galleryImages = files.images;
+		}
+		if (offerDto?.images?.length && typeof offerDto?.images[0] === "string") {
+			galleryImages = offerDto.images;
+		}
 		return this.offerService.create(offerDto, previewImage, galleryImages);
 	}
 

@@ -25,13 +25,6 @@ export class UserService {
 			errorCatcher("You need to enter a password", HttpStatus.BAD_REQUEST);
 		}
 
-		if (dto.role && dto.role.some((r) => r === UserRoles.HOST)) {
-			errorCatcher(
-				"You need to enter an unique phone number",
-				HttpStatus.BAD_REQUEST
-			);
-		}
-
 		const imagePath =
 			typeof avatarUrl === "string"
 				? avatarUrl
@@ -50,6 +43,19 @@ export class UserService {
 			return user;
 		} catch (err) {
 			let errorMessage = err.message;
+
+			if (
+				dto.role &&
+				dto.role.some((r) => r === UserRoles.HOST) &&
+				err.keyPattern &&
+				"phone" in err.keyPattern
+			) {
+				errorCatcher(
+					"You need to enter an unique phone number",
+					HttpStatus.BAD_REQUEST
+				);
+			}
+
 			if (err.keyPattern && "email" in err.keyPattern) {
 				errorMessage = "Email must be unique";
 			}
