@@ -1,16 +1,10 @@
-import { HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { UserDto } from "src/user/dto/create-user.dto";
-import * as bcrypt from "bcryptjs";
-import { errorCatcher, getUserDataWithoutPassword } from "src/utils";
-import { UserDocument } from "src/user/schemas/user.schema";
+import { HttpStatus, Injectable } from "@nestjs/common";
+import { errorCatcher } from "src/utils";
 import { Model, ObjectId } from "mongoose";
 import { Comment, CommentDocument } from "./schemas/comment.schemas";
 import { InjectModel } from "@nestjs/mongoose";
 import { OfferService } from "src/offer/offer.service";
-import { UserService } from "../user/user.service";
 import { CreateCommentDto } from "./dto/create-comment.dto";
-import { Endpoints } from "../const";
 
 @Injectable()
 export class CommentService {
