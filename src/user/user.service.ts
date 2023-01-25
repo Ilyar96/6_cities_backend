@@ -75,7 +75,7 @@ export class UserService {
 	}
 
 	async getOne(id: ObjectId): Promise<any> {
-		const user = await this.userModel.findById(id);
+		const user = await await await this.userModel.findById(id);
 		return user;
 	}
 
@@ -99,8 +99,14 @@ export class UserService {
 			errorCatcher("Already favorited", HttpStatus.BAD_REQUEST);
 		}
 
-		const offer = await this.offerService.getOne(id);
-		user.favorites.push(offer);
+		let offer = await this.offerService.getOne(id);
+
+		const getNestedData = (offer: any) => {
+			const { ...data } = offer._doc as any;
+			return data;
+		};
+
+		user.favorites.push(getNestedData(offer));
 		user.save();
 		return user;
 	}
