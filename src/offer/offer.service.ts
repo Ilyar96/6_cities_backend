@@ -26,6 +26,12 @@ export class OfferService {
 		previewImage: File | string,
 		images: File[] | string[]
 	): Promise<Offer> {
+		const goods = dto.goods.split("; ");
+		const location = {
+			latitude: dto.latitude,
+			longitude: dto.longitude,
+			zoom: dto.zoom,
+		};
 		const previewImageImagePath =
 			typeof previewImage === "string"
 				? previewImage
@@ -39,7 +45,9 @@ export class OfferService {
 		const offer = await (
 			await this.offerModel.create({
 				...dto,
+				goods,
 				comments: [],
+				location,
 				previewImage: previewImageImagePath,
 				images: gallery,
 			})
@@ -53,6 +61,12 @@ export class OfferService {
 		images: File[] | string[],
 		id: ObjectId
 	): Promise<Offer> {
+		const goods = dto.goods.split("; ");
+		const location = {
+			latitude: dto.latitude,
+			longitude: dto.longitude,
+			zoom: dto.zoom,
+		};
 		const previewImageImagePath =
 			typeof previewImage === "string"
 				? previewImage
@@ -66,6 +80,8 @@ export class OfferService {
 		let offer = await (
 			await this.offerModel.findByIdAndUpdate(id, {
 				...dto,
+				goods,
+				location,
 				previewImage: previewImageImagePath,
 				images: gallery,
 			})
@@ -186,7 +202,6 @@ export class OfferService {
 			return c._id.toString() !== comment._id.toString();
 		});
 		offer.comments.push({ user, description, _id, createdAt, updatedAt });
-		console.log(offer.comments);
 		offer.save();
 		return offer;
 	}
