@@ -139,6 +139,12 @@ export class OfferService {
 		return offer;
 	}
 
+	async isOfferExist(id: ObjectId): Promise<boolean> {
+		const offer = await this.offerModel.findById(id);
+		if (!offer) return false;
+		return true;
+	}
+
 	async delete(id: ObjectId): Promise<ObjectId> {
 		try {
 			const offer = await this.offerModel.findByIdAndDelete(id);
@@ -205,6 +211,7 @@ export class OfferService {
 			return c._id.toString() !== comment._id.toString();
 		});
 		offer.comments.push({ user, description, _id, createdAt, updatedAt });
+		this.calculateRating(offer);
 		offer.save();
 		return offer;
 	}

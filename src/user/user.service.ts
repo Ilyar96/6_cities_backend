@@ -7,6 +7,7 @@ import { User, UserDocument, UserRoles } from "./schemas/user.schema";
 import { errorCatcher } from "../utils/errorCatcher";
 import { OfferService } from "../offer/offer.service";
 import { OfferDocument } from "src/offer/schemas/offer.schema";
+import { Offer } from "../offer/schemas/offer.schema";
 
 @Injectable()
 export class UserService {
@@ -75,7 +76,17 @@ export class UserService {
 	}
 
 	async getOne(id: ObjectId): Promise<any> {
-		const user = await await await this.userModel.findById(id);
+		const user = await this.userModel.findById(id);
+		const favorites = await Promise.all(
+			user.favorites.map(async (f: any) => {
+				const isExist = await this.offerService.isOfferExist(f._id);
+				if (isExist) {
+					return f;
+				}
+			})
+		);
+		user.favorites = favorites.filter((f) => Boolean(f));
+		user.save();
 		return user;
 	}
 
