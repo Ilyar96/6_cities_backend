@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, ObjectId } from "mongoose";
+import { Model, ObjectId, Number } from "mongoose";
 import { FileService, FileType } from "../file/file.service";
 import { CreateOfferDto } from "./dto/create-offer.dto";
 import { Offer, OfferDocument } from "./schemas/offer.schema";
@@ -48,6 +48,7 @@ export class OfferService {
 				goods,
 				comments: [],
 				location,
+				rating: 0,
 				previewImage: previewImageImagePath,
 				images: gallery,
 			})
@@ -177,6 +178,7 @@ export class OfferService {
 				createdAt,
 				updatedAt,
 			});
+			this.calculateRating(offer);
 			offer.save();
 			return offer;
 		} catch (err) {
@@ -189,6 +191,7 @@ export class OfferService {
 		offer.comments = offer.comments.filter((c: CommentDocument) => {
 			return c._id.toString() !== comment._id.toString();
 		});
+		this.calculateRating(offer);
 		offer.save();
 		return offer;
 	}
@@ -204,5 +207,16 @@ export class OfferService {
 		offer.comments.push({ user, description, _id, createdAt, updatedAt });
 		offer.save();
 		return offer;
+	}
+
+	async calculateRating(offer: Offer) {
+		if (offer.comments.length > 0) {
+			const ratingSum = offer.comments.reduce(
+				(sum, offer) => sum + Number(offer.rating),
+				0
+			);
+			const len = offer.comments.length;
+			offer.rating = Number((ratingSum / len).toFixed(1));
+		}
 	}
 }
