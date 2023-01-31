@@ -203,14 +203,27 @@ export class OfferService {
 	}
 
 	async updateComment(comment: CommentDocument): Promise<Offer> {
-		const { description, user, _id, createdAt, updatedAt }: CommentDocument =
-			comment;
+		const {
+			description,
+			user,
+			rating,
+			_id,
+			createdAt,
+			updatedAt,
+		}: CommentDocument = comment;
 
 		const offer = await this.offerModel.findById(comment.offer);
 		offer.comments = offer.comments.filter((c: CommentDocument) => {
 			return c._id.toString() !== comment._id.toString();
 		});
-		offer.comments.push({ user, description, _id, createdAt, updatedAt });
+		offer.comments.push({
+			user,
+			rating,
+			description,
+			_id,
+			createdAt,
+			updatedAt,
+		});
 		this.calculateRating(offer);
 		offer.save();
 		return offer;

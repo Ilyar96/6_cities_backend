@@ -64,6 +64,7 @@ export class CommentService {
 			const comment = await await this.commentModel
 				.findById(id)
 				.populate("user");
+			comment.rating = Number(dto.rating);
 			comment.description = dto.description;
 			comment.save();
 			await this.offerService.updateComment(comment);

@@ -76,18 +76,22 @@ export class UserService {
 	}
 
 	async getOne(id: ObjectId): Promise<any> {
-		const user = await this.userModel.findById(id);
-		const favorites = await Promise.all(
-			user.favorites.map(async (f: any) => {
-				const isExist = await this.offerService.isOfferExist(f._id);
-				if (isExist) {
-					return f;
-				}
-			})
-		);
-		user.favorites = favorites.filter((f) => Boolean(f));
-		user.save();
-		return user;
+		try {
+			const user = await this.userModel.findById(id);
+			const favorites = await Promise.all(
+				user.favorites.map(async (f: any) => {
+					const isExist = await this.offerService.isOfferExist(f._id);
+					if (isExist) {
+						return f;
+					}
+				})
+			);
+			user.favorites = favorites.filter((f) => Boolean(f));
+			user.save();
+			return user;
+		} catch (err) {
+			errorCatcher(`User with this id does not exist`, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	async delete(id: ObjectId): Promise<ObjectId> {
